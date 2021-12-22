@@ -5,10 +5,20 @@ import Footer from '../components/Footer'
 import CreateForm from '../components/CreateForm'
 import ReportTable from '../components/RepostTable'
 import { hours } from "../data"
+import axios from 'axios'
+import Login from '../components/Login'
+import CookieStandAdmin from '../components/CookieStandAdmin'
 export default function Home() {
 
   // const [randCust, setRandCust] = useState([])
   const [cookiesArray, setCoookiesArray] = useState([])
+  const  [token,setToken] = useState('') 
+  function LoginUser(e,user,password){
+    axios.post('https://cooke-stand.herokuapp.com/api/token/',{username:user,password:password}).then(res=> {
+      setToken(res.data)
+    })
+  }
+
 
   
   function submitHandler(e) {
@@ -48,6 +58,7 @@ export default function Home() {
     // }
   }
 
+ if (!token) return <Login LoginUser={LoginUser}/>
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       <Head>
@@ -56,8 +67,10 @@ export default function Home() {
       <Header />
       <main className="flex flex-col items-center justify-center flex-1 w-full px-20 text-center">
         <CreateForm onSubmit={submitHandler} />
-        <ReportTable cookiesArray={cookiesArray}/>
+        <ReportTable  token = {token} cookiesArray={cookiesArray}/>
+        <CookieStandAdmin token = {token}/>
       </main>
+  
       <Footer len={cookiesArray.length} />
     </div>
   )
